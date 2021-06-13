@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 3714800303009886396}
   - component: {fileID: 6793516992088483140}
   - component: {fileID: 8653296478896012110}
+  - component: {fileID: 7047410365971894322}
   m_Layer: 0
   m_Name: Enemy
   m_TagString: Enemy
@@ -49,7 +50,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _speed: 4
-  _player: {fileID: 0}
+  _laserPrefab: {fileID: 6626297560587049667, guid: 6efd2b07604e9864c9dc04bca49df4ff,
+    type: 3}
 --- !u!212 &3912804142046138518
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -134,7 +136,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0.00029969215, y: 0.009278417}
+  m_Offset: {x: 0.0060606003, y: 0.6573789}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -145,7 +147,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 2.0855803, y: 2.7997448}
+  m_Size: {x: 2.200798, y: 1.5035439}
   m_EdgeRadius: 0
 --- !u!95 &6793516992088483140
 Animator:
@@ -262,3 +264,29 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!61 &7047410365971894322
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4731036452506482347}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0.027090937, y: -0.77021515}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 5.12, y: 5.12}
+    newSize: {x: 5.12, y: 5.12}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 1.1214905, y: 1.347337}
+  m_EdgeRadius: 0
