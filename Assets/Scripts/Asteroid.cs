@@ -29,5 +29,11 @@ public class Asteroid : MonoBehaviour
             _spawnManager.StartSpawning();
             Destroy(this.gameObject, 0.3f);
         }
+        if (other.tag == "PlayerEMP")
+        {
+            Instantiate(_explosionPrefab, transform.position, Quaternion.identity);
+            _spawnManager.StartSpawning();
+            Destroy(this.gameObject, 0.25f);
+        }
     }
 }

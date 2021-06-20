@@ -35,7 +35,7 @@ public class Laser : MonoBehaviour
 
     void EnemyLaser()
     {
-        _laserSpeed = 5f;
+        _laserSpeed = 6f;
         transform.Translate(Vector3.down * _laserSpeed * Time.deltaTime);
 
         if (transform.position.y < -10f)

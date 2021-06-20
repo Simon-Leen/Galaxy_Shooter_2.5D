@@ -39,6 +39,18 @@ public class Powerup : MonoBehaviour
                     case 2:
                         player.ShieldActivate();
                         break;
+                    case 3:
+                        player.RefillAmmo();
+                        break;
+                    case 4:
+                        player.HealthPowerup();
+                        break;
+                    case 5:
+                        player.ChaosActivate();
+                        break;
+                    case 6:
+                        player.EMPActivate();
+                        break;
                     default:
                         Debug.Log("Unknown item collected");
                         break;

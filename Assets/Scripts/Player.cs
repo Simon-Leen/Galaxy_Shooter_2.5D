@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.PostProcessing;
 
 public class Player : MonoBehaviour
 {
@@ -37,14 +39,51 @@ public class Player : MonoBehaviour
     [SerializeField]
     private AudioClip _laserSound;
     private AudioSource _audioSource;
+    [SerializeField]
+    private AudioClip _emptyAmmo;
+    [SerializeField]
+    private AudioClip _playerHit;
+
+    [SerializeField]
+    private float _thrusterSpeed = 1.5f;
+    [SerializeField]
+    private GameObject _thrusterPrefab;
+
+    [SerializeField]
+    private int _shieldHealth;
+
+    [SerializeField]
+    private int _playerAmmo;
+
+    [SerializeField]
+    private PostProcessVolume _ppv;
+
+    private ColorGrading _cgl;
+    private Bloom _bloom;
+
+    [SerializeField]
+    private GameObject _chaosGuns;
+    [SerializeField]
+    private bool _isChaosActive;
+
+    [SerializeField]
+    private GameObject _playerEMP;
+    [SerializeField]
+    private bool _isEMPActive = false;
 
     void Start()
     {
         transform.position = new Vector3(0, -2, 0);
+        
 
         spawnManager = GameObject.Find("Spawn_Manager").GetComponent<SpawnManager>();
         _uiManager = GameObject.Find("Canvas").GetComponent<UIManager>();
         _audioSource = GetComponent<AudioSource>();
+
+
+        _ppv.profile.TryGetSettings(out _cgl);
+        _ppv.profile.TryGetSettings(out _bloom);
+
 
         if (spawnManager == null)
         {
@@ -58,10 +97,8 @@ public class Player : MonoBehaviour
         {
             Debug.LogError("Audio Source on Player is Null");
         }
-        else
-        {
-            _audioSource.clip = _laserSound;
-        }
+        _playerAmmo = 15;
+        _uiManager.UpdateAmmo(_playerAmmo);
     }
 
     void Update()
@@ -70,8 +107,56 @@ public class Player : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Space) && Time.time > _nextFire)
         {
-            ShootLaser();
+            if(_playerAmmo > 0)
+            {
+                ShootLaser();
+            }
+            else
+            {
+                _audioSource.clip = _emptyAmmo;
+                _audioSource.Play();
+            }
         }
+
+        if (Input.GetKeyDown(KeyCode.LeftShift))
+        {
+            ThrustersActivate();
+        }
+        if (Input.GetKeyUp(KeyCode.LeftShift))
+        {
+            ThrustersDeactivate();
+        }
+        if(Input.GetKeyDown(KeyCode.E) )
+        {
+            if (_isEMPActive == true)
+            {
+                FireEMP();
+            }
+            else
+            {
+                _audioSource.clip = _emptyAmmo;
+                _audioSource.Play();
+            }
+            
+        }
+    }
+    
+    void ThrustersActivate()
+    {
+        
+        _speed *= _thrusterSpeed;
+        Vector3 scaler = new Vector3(1.15f, 1.15f, 1f);
+        _thrusterPrefab.transform.localScale = scaler;
+        Vector3 thrusterPos = new Vector3(transform.position.x, (transform.position.y - 1.6f), transform.position.z);
+        _thrusterPrefab.transform.position = thrusterPos;
+    }
+    void ThrustersDeactivate()
+    {
+        _speed /= _thrusterSpeed;
+        Vector3 scaler = new Vector3(1f, 1f, 1f);
+        _thrusterPrefab.transform.localScale = scaler;
+        Vector3 thrusterPos = new Vector3(transform.position.x, (transform.position.y - 1.5f), transform.position.z);
+        _thrusterPrefab.transform.position = thrusterPos;
     }
 
     void CalculateMovement()
@@ -105,27 +190,56 @@ public class Player : MonoBehaviour
     void ShootLaser()
     {
         _nextFire = Time.time + _fireRate;
+        
+        if(_playerAmmo < 3)
+        {
+            _isTripleShotActive = false;
+        }
         if (_isTripleShotActive)
         {
+            _playerAmmo = _playerAmmo-3;
             Instantiate(_tripleShotPrefab, transform.position + new Vector3(0, 1, 0), Quaternion.identity);
+        }
+        else if(_isChaosActive)
+        {
+            Instantiate(_laserPrefab, transform.position + new Vector3(-0.92f, -0.6f, 0), Quaternion.Euler(0f, 0f, 123f));
+            Instantiate(_laserPrefab, transform.position + new Vector3(-1.1f, 0.13f, 0), Quaternion.Euler(0f, 0f, 85f));
+            Instantiate(_laserPrefab, transform.position + new Vector3(-0.7f, 0.85f, 0), Quaternion.Euler(0f, 0f, 32f));
+            Instantiate(_laserPrefab, transform.position + new Vector3(0f, 1, 0), Quaternion.Euler(0f, 0f, 0f));
+            Instantiate(_laserPrefab, transform.position + new Vector3(0.7f, 0.85f, 0), Quaternion.Euler(0f, 0f, -32f));
+            Instantiate(_laserPrefab, transform.position + new Vector3(1.1f, 0.13f, 0), Quaternion.Euler(0f, 0f, -85f));
+            Instantiate(_laserPrefab, transform.position + new Vector3(0.92f, -0.6f, 0), Quaternion.Euler(0f, 0f, -123f));
         }
         else
         {
+            _playerAmmo--;
             Instantiate(_laserPrefab, transform.position + new Vector3(0, 1, 0), Quaternion.identity);
         }
+        _uiManager.UpdateAmmo(_playerAmmo);
+        _audioSource.clip = _laserSound ;
         _audioSource.Play();
         
+    }
+
+    public void FireEMP()
+    {
+        Instantiate(_playerEMP, transform.position + new Vector3(0, 0, 0), Quaternion.identity);
+        _isEMPActive = false;
     }
 
     public void TakeDamage()
     {
         if(_isShieldActive == true)
         {
-            _isShieldActive = false;
-            _shieldVisualizer.SetActive(false);
+            _shieldHealth--;
+            ShieldHealth();
+            
             return;
         }
-
+        StartCoroutine("PlayerHit");
+        _audioSource.clip = _playerHit;
+        _audioSource.Play();
+        
         _lives--;
 
         if(_lives == 2)
@@ -144,7 +258,57 @@ public class Player : MonoBehaviour
             Destroy(this.gameObject);
         }
     }
-
+    IEnumerator PlayerHit()
+    {
+        _cgl.temperature.value = 100f;
+        _cgl.tint.value = 100f;
+        _bloom.intensity.value = 5f;
+        yield return new WaitForSeconds(0.15f);
+        _cgl.temperature.value = -15f;
+        _cgl.tint.value = 10f;
+        _bloom.intensity.value = 3f;
+    }
+    public void HealthPowerup()
+    {
+        if(_lives == 2)
+        {
+            _lives++;
+            _leftWingDamage.SetActive(false);
+        }
+        else if(_lives == 1)
+        {
+            _lives++;
+            _rightWingDamage.SetActive(false);
+        }
+        _uiManager.UpdateLives(_lives);
+    }
+    public void ShieldHealth()
+    {
+        Vector3 scaler;
+        switch (_shieldHealth)
+        {
+            case 3:
+                 scaler = new Vector3(2f, 2f, 2f);
+                _shieldVisualizer.transform.localScale = scaler;
+                break;
+            case 2:
+                 scaler = new Vector3(1.75f, 1.75f, 1.75f);
+                _shieldVisualizer.transform.localScale = scaler;
+                break;
+            case 1:
+                scaler = new Vector3(1.5f, 1.5f, 1.5f);
+                _shieldVisualizer.transform.localScale = scaler;
+                break;
+            case 0:
+                _isShieldActive = false;
+                _shieldVisualizer.SetActive(false);
+                break;
+            default:
+                _isShieldActive = false;
+                _shieldVisualizer.SetActive(false);
+                break;
+        }
+    }
     public void TripleShotActivate()
     {
         _isTripleShotActive = true;
@@ -172,12 +336,39 @@ public class Player : MonoBehaviour
 
     public void ShieldActivate()
     {
+        _shieldHealth = 3;
+        ShieldHealth();
         _isShieldActive = true;
         _shieldVisualizer.SetActive(true);
+    }
+    public void RefillAmmo()
+    {
+        _playerAmmo = 15;
+        _uiManager.UpdateAmmo(_playerAmmo);
     }
     public void AddScore(int score)
     {
         _score += score;
         _uiManager.UpdateScore(_score);
+    }
+
+    public void ChaosActivate()
+    {
+        RefillAmmo();
+        _chaosGuns.SetActive(true);
+        _isChaosActive = true;
+        StartCoroutine("ChaosCoolDown");
+    }
+
+    IEnumerator ChaosCoolDown()
+    {
+        yield return new WaitForSeconds(5f);
+        _chaosGuns.SetActive(false);
+        _isChaosActive = false;
+    }
+
+    public void EMPActivate()
+    {
+        _isEMPActive = true;
     }
 }
