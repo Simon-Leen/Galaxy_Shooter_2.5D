@@ -71,6 +71,8 @@ public class Player : MonoBehaviour
     [SerializeField]
     private bool _isEMPActive = false;
 
+    private CameraShake _camShake;
+
     void Start()
     {
         transform.position = new Vector3(0, -2, 0);
@@ -79,7 +81,13 @@ public class Player : MonoBehaviour
         spawnManager = GameObject.Find("Spawn_Manager").GetComponent<SpawnManager>();
         _uiManager = GameObject.Find("Canvas").GetComponent<UIManager>();
         _audioSource = GetComponent<AudioSource>();
-
+        
+        _camShake = Camera.main.GetComponent<CameraShake>();
+        
+        if(_camShake == null)
+        {
+            Debug.LogError("Camera Shake is null");
+        }
 
         _ppv.profile.TryGetSettings(out _cgl);
         _ppv.profile.TryGetSettings(out _bloom);
@@ -189,6 +197,7 @@ public class Player : MonoBehaviour
 
     void ShootLaser()
     {
+        
         _nextFire = Time.time + _fireRate;
         
         if(_playerAmmo < 3)
@@ -237,6 +246,7 @@ public class Player : MonoBehaviour
             return;
         }
         StartCoroutine("PlayerHit");
+        StartCoroutine(_camShake.CamShake());
         _audioSource.clip = _playerHit;
         _audioSource.Play();
         
