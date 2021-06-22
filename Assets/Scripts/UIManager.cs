@@ -19,6 +19,22 @@ public class UIManager : MonoBehaviour
 
     [SerializeField]
     private Text _ammoText;
+
+    [SerializeField]
+    private Image _ammoImg;
+    [SerializeField]
+    private Sprite[] _ammoSprites;
+
+    private bool _isChaosActive = false;
+
+    [SerializeField]
+    private Image _thrusterLevel;
+    [SerializeField]
+    private Sprite[] _thrusterSprites;
+    [SerializeField]
+    private Image _thrusterImg;
+
+    private bool _isThrusterCharging = false;
     void Start()
     {
         _scoreText.text = "Score: " + 0;
@@ -26,9 +42,44 @@ public class UIManager : MonoBehaviour
         _gameOverText.gameObject.SetActive(false);
         _restartText.gameObject.SetActive(false);
         _gameManager = GameObject.Find("Game_Manager").GetComponent<GameManager>();
-        if(_gameManager == null)
+        if (_gameManager == null)
         {
             Debug.LogError("Game Manager is Null");
+        }
+    }
+
+    public void UpdateThrusters(float level)
+    {
+        if (_isThrusterCharging)
+        {
+            _thrusterImg.sprite = _thrusterSprites[1];
+        }
+        else
+        {
+            _thrusterImg.sprite = _thrusterSprites[0];
+        }
+        _thrusterLevel.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, level);
+    }
+    public void ThrustersCharging(bool charging)
+    {
+        if(charging == true)
+        {
+            _isThrusterCharging = true;
+        }
+        else
+        {
+            _isThrusterCharging = false;
+        }
+    }
+    public void ChaosActive(bool chaos)
+    {
+        if(chaos == true)
+        {
+            _isChaosActive = true;
+        }
+        else
+        {
+            _isChaosActive = false;
         }
     }
 
@@ -39,7 +90,16 @@ public class UIManager : MonoBehaviour
 
     public void UpdateAmmo(int playerAmmo)
     {
-        _ammoText.text = "Ammo: " + playerAmmo;
+        _ammoText.text =  playerAmmo+"/15";
+        if(_isChaosActive == true)
+        {
+            _ammoImg.sprite = _ammoSprites[16];
+        }
+        else
+        {
+            _ammoImg.sprite = _ammoSprites[playerAmmo];
+        }
+        
     }
 
     public void UpdateLives(int lives)

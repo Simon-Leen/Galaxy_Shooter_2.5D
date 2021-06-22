@@ -73,6 +73,14 @@ public class Player : MonoBehaviour
 
     private CameraShake _camShake;
 
+    [SerializeField]
+    private float _thrustersLevel = 3f;
+    private float _canThrust = 0f;
+    private float _thrusterCharge = 3f;
+    private bool _isThrustersActive = false;
+    [SerializeField]
+    private bool _isThrustersCharging = false;
+
     void Start()
     {
         transform.position = new Vector3(0, -2, 0);
@@ -126,14 +134,22 @@ public class Player : MonoBehaviour
             }
         }
 
-        if (Input.GetKeyDown(KeyCode.LeftShift))
+        if (Input.GetKeyDown(KeyCode.LeftShift) && _canThrust < Time.time)
         {
-            ThrustersActivate();
+            if(_thrustersLevel > 0)
+            {
+                _isThrustersActive = true;
+                ThrustersActivate();
+            }
         }
         if (Input.GetKeyUp(KeyCode.LeftShift))
         {
+            _isThrustersActive = false;
             ThrustersDeactivate();
         }
+
+        ThrustersUsage();
+
         if(Input.GetKeyDown(KeyCode.E) )
         {
             if (_isEMPActive == true)
@@ -145,28 +161,85 @@ public class Player : MonoBehaviour
                 _audioSource.clip = _emptyAmmo;
                 _audioSource.Play();
             }
-            
         }
     }
     
     void ThrustersActivate()
     {
-        
         _speed *= _thrusterSpeed;
         Vector3 scaler = new Vector3(1.15f, 1.15f, 1f);
         _thrusterPrefab.transform.localScale = scaler;
-        Vector3 thrusterPos = new Vector3(transform.position.x, (transform.position.y - 1.6f), transform.position.z);
+        Vector3 thrusterPos = new Vector3(transform.position.x, (transform.position.y - 1.3f), transform.position.z);
         _thrusterPrefab.transform.position = thrusterPos;
     }
     void ThrustersDeactivate()
     {
-        _speed /= _thrusterSpeed;
+        _speed = 3.5f;
         Vector3 scaler = new Vector3(1f, 1f, 1f);
         _thrusterPrefab.transform.localScale = scaler;
-        Vector3 thrusterPos = new Vector3(transform.position.x, (transform.position.y - 1.5f), transform.position.z);
+        Vector3 thrusterPos = new Vector3(transform.position.x, (transform.position.y - 1.2f), transform.position.z);
         _thrusterPrefab.transform.position = thrusterPos;
     }
 
+    void ThrustersUsage()
+    {
+        if(_isThrustersActive)
+        {   
+            if(_thrustersLevel > 0)
+            { 
+                _thrustersLevel -= Time.deltaTime;
+                _uiManager.UpdateThrusters(_thrustersLevel);
+            }
+            else
+            {
+                _thrustersLevel = 0;
+                ThrustersDeactivate();
+                _canThrust = _thrusterCharge + Time.time;
+                _isThrustersCharging = true;
+                _uiManager.ThrustersCharging(_isThrustersCharging);
+                StartCoroutine("ThrusterCharged");
+                _uiManager.UpdateThrusters(_thrustersLevel);
+                _speed = 3.5f;
+            }
+            
+        }
+        else
+        {
+            if(_isThrustersCharging)
+            {
+                if (_thrustersLevel < 3)
+                {
+                    _thrustersLevel += Time.deltaTime;
+                    _uiManager.UpdateThrusters(_thrustersLevel);
+                }
+                else
+                {
+                    _thrustersLevel = 3;
+                    _uiManager.UpdateThrusters(_thrustersLevel);
+                }
+            }
+            else
+            {
+                if (_thrustersLevel < 3)
+                {
+                    _thrustersLevel += Time.deltaTime / 3;
+                    _uiManager.UpdateThrusters(_thrustersLevel);
+                }
+                else
+                {
+                    _thrustersLevel = 3;
+                    _uiManager.UpdateThrusters(_thrustersLevel);
+                }
+            }
+        }
+    }
+
+    IEnumerator ThrusterCharged()
+    {
+        yield return new WaitForSeconds(3f);
+        _uiManager.ThrustersCharging(false);
+        _isThrustersCharging = false;
+    }
     void CalculateMovement()
     {
         float horizontalInput = Input.GetAxis("Horizontal");
@@ -176,22 +249,22 @@ public class Player : MonoBehaviour
 
         transform.Translate(direction * Time.deltaTime * _speed);
     
-        if (transform.position.y >= 0.5f)
+        if (transform.position.y >= 0.75f)
         {
-            transform.position = new Vector3(transform.position.x, 0.5f, 0);
+            transform.position = new Vector3(transform.position.x, 0.75f, 0);
         }
-        else if (transform.position.y <= -4f)
+        else if (transform.position.y <= -2.5f)
         {
-            transform.position = new Vector3(transform.position.x, -4f, 0);
+            transform.position = new Vector3(transform.position.x, -2.5f, 0);
         }
 
-        if (transform.position.x > 11.5f)
+        if (transform.position.x > 10f)
         {
-            transform.position = new Vector3(-11.5f, transform.position.y, 0);
+            transform.position = new Vector3(-10f, transform.position.y, 0);
         }
-        else if (transform.position.x < -11.5f)
+        else if (transform.position.x < -10f)
         {
-            transform.position = new Vector3(11.5f, transform.position.y, 0);
+            transform.position = new Vector3(10f, transform.position.y, 0);
         }
     }
 
@@ -367,6 +440,8 @@ public class Player : MonoBehaviour
         RefillAmmo();
         _chaosGuns.SetActive(true);
         _isChaosActive = true;
+        _uiManager.ChaosActive(_isChaosActive);
+        _uiManager.UpdateAmmo(_playerAmmo);
         StartCoroutine("ChaosCoolDown");
     }
 
@@ -375,6 +450,8 @@ public class Player : MonoBehaviour
         yield return new WaitForSeconds(5f);
         _chaosGuns.SetActive(false);
         _isChaosActive = false;
+        _uiManager.ChaosActive(_isChaosActive);
+        _uiManager.UpdateAmmo(_playerAmmo);
     }
 
     public void EMPActivate()
