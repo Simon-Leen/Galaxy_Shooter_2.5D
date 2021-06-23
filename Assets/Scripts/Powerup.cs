@@ -51,6 +51,9 @@ public class Powerup : MonoBehaviour
                     case 6:
                         player.EMPActivate();
                         break;
+                    case 7:
+                        player.Damage();
+                        break;
                     default:
                         Debug.Log("Unknown item collected");
                         break;

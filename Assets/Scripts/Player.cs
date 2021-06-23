@@ -458,4 +458,18 @@ public class Player : MonoBehaviour
     {
         _isEMPActive = true;
     }
+
+    public void Damage()
+    {
+        TakeDamage();
+        if(_playerAmmo < 5)
+        {
+            _playerAmmo = 0;
+        }
+        else
+        {
+            _playerAmmo -= 5;
+        }
+        _uiManager.UpdateAmmo(_playerAmmo);
+    }
 }
