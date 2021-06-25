@@ -19,6 +19,7 @@ public class Enemy : MonoBehaviour
     [SerializeField]
     private AudioClip _enemyLaserSound;
 
+    private float _sideways = 0;
     private void Start()
     {
         _player = GameObject.Find("Player").GetComponent<Player>();
@@ -36,6 +37,7 @@ public class Enemy : MonoBehaviour
         {
             Debug.LogError("Audio Source on Enemy is Null");
         }
+        StartCoroutine("Sideways");
     }
 
     void Update()
@@ -63,12 +65,29 @@ public class Enemy : MonoBehaviour
     }
     void CalcMovement()
     {
-        transform.Translate(Vector3.down * _speed * Time.deltaTime);
+        transform.Translate( (Vector3.down + new Vector3(_sideways, 0, 0)) * _speed * Time.deltaTime);
 
         if (transform.position.y < -6f)
         {
             transform.position = new Vector3(transform.position.x, 7f, 0);
         }
+        if (transform.position.x > 8f)
+        {
+            _sideways = -_sideways;
+        }
+        else if (transform.position.x < -8f)
+        {
+            _sideways = -_sideways;
+        }
+    }
+    IEnumerator Sideways()
+    {
+        while(true)
+        {
+            yield return new WaitForSeconds(Random.Range(1,3));
+            _sideways = Random.Range(-0.25f, 0.25f);
+        }
+        
     }
     private void OnTriggerEnter2D(Collider2D other)
     {
