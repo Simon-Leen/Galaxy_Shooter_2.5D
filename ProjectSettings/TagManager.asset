@@ -9,6 +9,8 @@ TagManager:
   - EnemyLaser
   - PlayerEMP
   - FireSpin
+  - Laserbeam
+  - EnemyEMP
   layers:
   - Default
   - TransparentFX

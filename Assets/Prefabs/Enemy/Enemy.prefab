@@ -51,8 +51,11 @@ MonoBehaviour:
   _speed: 4
   _laserPrefab: {fileID: 6626297560587049667, guid: 6efd2b07604e9864c9dc04bca49df4ff,
     type: 3}
+  _redEnemyLaser: {fileID: 6626297560587049667, guid: f8320e7c19a819d469c4b310deacf748,
+    type: 3}
   _explosionSound: {fileID: 8300000, guid: a885c043fab7e46438bba03ba9dab6bc, type: 3}
   _enemyLaserSound: {fileID: 8300000, guid: 75676f361bdfeaf41a46623e95df3dbc, type: 3}
+  _isRedEnemy: 0
 --- !u!212 &3912804142046138518
 SpriteRenderer:
   m_ObjectHideFlags: 0

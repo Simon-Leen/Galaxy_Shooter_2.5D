@@ -9,6 +9,8 @@ public class Enemy : MonoBehaviour
     private Player _player;
     [SerializeField]
     private GameObject _laserPrefab;
+    [SerializeField]
+    private GameObject _redEnemyLaser;
     private float _fireRate = 3f;
     private float _canFire = -1;
 
@@ -20,6 +22,11 @@ public class Enemy : MonoBehaviour
     private AudioClip _enemyLaserSound;
 
     private float _sideways = 0;
+
+    [SerializeField]
+    private bool _isRedEnemy = false;
+
+
     private void Start()
     {
         _player = GameObject.Find("Player").GetComponent<Player>();
@@ -43,7 +50,18 @@ public class Enemy : MonoBehaviour
     void Update()
     {
         CalcMovement();
-        EnemyFire();
+        {
+            if (_isRedEnemy)
+            {
+                _speed = 3f;
+                RedEnemyFire();
+            }
+            else
+            {
+                _speed = 4f;
+                EnemyFire();
+            }
+        }
         
     }
     void EnemyFire()
@@ -63,6 +81,25 @@ public class Enemy : MonoBehaviour
             _audioSource.Play();
         }
     }
+    void RedEnemyFire()
+    {
+        if (Time.time > _canFire)
+        {
+            _fireRate = Random.Range(3f, 7f);
+            _canFire = Time.time + _fireRate;
+
+            GameObject enemyLaser = Instantiate(_redEnemyLaser, transform.position, Quaternion.identity);
+            Laser[] lasers = enemyLaser.GetComponentsInChildren<Laser>();
+            foreach (Laser l in lasers)
+            {
+                l.AssignEnemyLaser();
+            }
+            _audioSource.clip = _enemyLaserSound;
+            _audioSource.Play();
+        }
+    }
+
+
     void CalcMovement()
     {
         transform.Translate( (Vector3.down + new Vector3(_sideways, 0, 0)) * _speed * Time.deltaTime);
@@ -87,7 +124,6 @@ public class Enemy : MonoBehaviour
             yield return new WaitForSeconds(Random.Range(1,3));
             _sideways = Random.Range(-0.25f, 0.25f);
         }
-        
     }
     private void OnTriggerEnter2D(Collider2D other)
     {
@@ -110,6 +146,13 @@ public class Enemy : MonoBehaviour
 
         if (other.tag == "Laser")
         {
+            if (transform.childCount > 0)
+            {
+                foreach(Transform c in transform)
+                {
+                    Destroy(c.gameObject);
+                }
+            }
             Destroy(other.gameObject);
             if (_player != null)
             {

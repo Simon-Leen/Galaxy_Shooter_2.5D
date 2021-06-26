@@ -6,6 +6,7 @@ public class Laser : MonoBehaviour
 {
     [SerializeField]
     private float _laserSpeed = 8f;
+    [SerializeField]
     private bool _isEnemyLaser = false;
 
     void Update()
@@ -59,6 +60,11 @@ public class Laser : MonoBehaviour
         {
             Player player = other.GetComponent<Player>();
             player.TakeDamage();
+            Destroy(this.gameObject);
+        }
+        if(other.tag == "EnemyEMP" && _isEnemyLaser == false)
+        {
+            Destroy(other.gameObject);
             Destroy(this.gameObject);
         }
     }

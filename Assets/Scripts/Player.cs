@@ -472,4 +472,13 @@ public class Player : MonoBehaviour
         }
         _uiManager.UpdateAmmo(_playerAmmo);
     }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if(other.tag == "EnemyEMP")
+        {
+            Destroy(other.gameObject);
+            Damage();
+        }
+    }
 }
