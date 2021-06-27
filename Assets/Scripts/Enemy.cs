@@ -44,6 +44,14 @@ public class Enemy : MonoBehaviour
         {
             Debug.LogError("Audio Source on Enemy is Null");
         }
+        if(_isRedEnemy)
+        {
+            _speed = 3f;
+        }
+        else
+        {
+            _speed = 4f;
+        }
         StartCoroutine("Sideways");
     }
 
@@ -53,12 +61,10 @@ public class Enemy : MonoBehaviour
         {
             if (_isRedEnemy)
             {
-                _speed = 3f;
                 RedEnemyFire();
             }
             else
             {
-                _speed = 4f;
                 EnemyFire();
             }
         }

@@ -266,14 +266,14 @@ MonoBehaviour:
   _newEnemy: {fileID: 2200328317991960182, guid: 4ee99527db69afc49bacb8f65f09ef54,
     type: 3}
   _powerups:
+  - {fileID: 6004876327306611015, guid: 7e85e935bca2f244e9c55f203acbc4a8, type: 3}
   - {fileID: 8334248633327015817, guid: 2ffe5697363140248b15fcf73c7944af, type: 3}
   - {fileID: 4588490627503509791, guid: 94eba3d29644de84dac014481c1281b4, type: 3}
-  - {fileID: 8795508993333779651, guid: e7417cb5ea9990048a8a4b2c4fe05747, type: 3}
-  - {fileID: 6004876327306611015, guid: 7e85e935bca2f244e9c55f203acbc4a8, type: 3}
+  - {fileID: 289790100763749568, guid: e1ceecd709d701243ba56e7fc6e3a4a3, type: 3}
   - {fileID: 470713913109019611, guid: 9c6a9ace671ed6143b6c773c3af0a7af, type: 3}
   - {fileID: 7453386648574051630, guid: 35093eae844ac1f4bb1cef8e5ba87c8f, type: 3}
   - {fileID: 5472664443027866336, guid: 9c31d067ee0a8f44689aaff5a3c28567, type: 3}
-  - {fileID: 289790100763749568, guid: e1ceecd709d701243ba56e7fc6e3a4a3, type: 3}
+  - {fileID: 8795508993333779651, guid: e7417cb5ea9990048a8a4b2c4fe05747, type: 3}
 --- !u!4 &90353506
 Transform:
   m_ObjectHideFlags: 0
