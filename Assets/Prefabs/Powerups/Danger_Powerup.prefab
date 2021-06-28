@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 1706997491257139443}
   m_Layer: 0
   m_Name: Danger_Powerup
-  m_TagString: Untagged
+  m_TagString: Powerup
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -98,7 +98,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: -0.01371932, y: 0.2469387}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -109,7 +109,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 5.12, y: 5.12}
+  m_Size: {x: 2.2116122, y: 3.2268038}
   m_EdgeRadius: 0
 --- !u!50 &3898880515141958466
 Rigidbody2D:
@@ -166,3 +166,4 @@ MonoBehaviour:
   _speed: 3
   _powerupID: 7
   _audioClip: {fileID: 8300000, guid: 5ee343246919d2b4bba63ae629e95494, type: 3}
+  _powerupDestroyed: {fileID: 8300000, guid: b21a82d436cfb4742a7df4a7b523f4e9, type: 3}

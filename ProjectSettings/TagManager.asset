@@ -11,6 +11,8 @@ TagManager:
   - FireSpin
   - Laserbeam
   - EnemyEMP
+  - EnemyShield
+  - Powerup
   layers:
   - Default
   - TransparentFX

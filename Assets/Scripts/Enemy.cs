@@ -25,7 +25,9 @@ public class Enemy : MonoBehaviour
 
     [SerializeField]
     private bool _isRedEnemy = false;
-
+    [SerializeField]
+    private GameObject _shieldVisualizer;
+    private bool _activeShield = true;
 
     private void Start()
     {
@@ -50,6 +52,7 @@ public class Enemy : MonoBehaviour
         }
         else
         {
+            _shieldVisualizer.SetActive(true);
             _speed = 4f;
         }
         StartCoroutine("Sideways");
@@ -135,6 +138,20 @@ public class Enemy : MonoBehaviour
     {
         if(other.tag == "Player")
         {
+            if (!_isRedEnemy && _activeShield == true)
+            {
+                _activeShield = false;
+                _shieldVisualizer.SetActive(false);
+                _player.TakeDamage();
+                return;
+            }
+            if (transform.childCount > 0)
+            {
+                foreach (Transform c in transform)
+                {
+                    Destroy(c.gameObject);
+                }
+            }
             Player player = other.transform.GetComponent<Player>();
             if(player != null)
             {
@@ -152,6 +169,13 @@ public class Enemy : MonoBehaviour
 
         if (other.tag == "Laser")
         {
+            if(!_isRedEnemy && _activeShield == true)
+            {
+                _activeShield = false;
+                _shieldVisualizer.SetActive(false);
+                Destroy(other.gameObject);
+                return;
+            }
             if (transform.childCount > 0)
             {
                 foreach(Transform c in transform)
@@ -178,6 +202,13 @@ public class Enemy : MonoBehaviour
             if (_player != null)
             {
                 _player.AddScore(Random.Range(5, 11));
+            }
+            if (transform.childCount > 0)
+            {
+                foreach (Transform c in transform)
+                {
+                    Destroy(c.gameObject);
+                }
             }
             _anim.SetTrigger("OnEnemyDeath");
             _speed = 0f;

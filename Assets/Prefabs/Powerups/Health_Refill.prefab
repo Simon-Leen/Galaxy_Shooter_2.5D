@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 6306000831360698971}
   m_Layer: 0
   m_Name: Health_Refill
-  m_TagString: Untagged
+  m_TagString: Powerup
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -119,7 +119,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0.03556609, y: 0.2548871}
+  m_Offset: {x: 0.021847367, y: 0.2548871}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -130,7 +130,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 2.4644332, y: 3.377284}
+  m_Size: {x: 2.2174947, y: 3.377284}
   m_EdgeRadius: 0
 --- !u!114 &8199964331633870505
 MonoBehaviour:
@@ -147,6 +147,7 @@ MonoBehaviour:
   _speed: 3
   _powerupID: 4
   _audioClip: {fileID: 8300000, guid: c3f15a5536f58f541b84993664547f65, type: 3}
+  _powerupDestroyed: {fileID: 8300000, guid: b21a82d436cfb4742a7df4a7b523f4e9, type: 3}
 --- !u!95 &6306000831360698971
 Animator:
   serializedVersion: 3
