@@ -29,6 +29,8 @@ public class Enemy : MonoBehaviour
     private GameObject _shieldVisualizer;
     private bool _activeShield = true;
 
+    private SpawnManager _spawnManager;
+
     private void Start()
     {
         _player = GameObject.Find("Player").GetComponent<Player>();
@@ -56,6 +58,8 @@ public class Enemy : MonoBehaviour
             _speed = 4f;
         }
         StartCoroutine("Sideways");
+
+        _spawnManager = GameObject.Find("Spawn_Manager").GetComponent<SpawnManager>();
     }
 
     void Update()
@@ -163,7 +167,7 @@ public class Enemy : MonoBehaviour
             _audioSource.clip = _explosionSound;
             _audioSource.Play();
             _canFire = 3600f;
-            
+            _spawnManager.EnemyDestroyed();
             Destroy(this.gameObject, 2.5f);
         }
 
@@ -194,6 +198,7 @@ public class Enemy : MonoBehaviour
             _audioSource.Play();
             _canFire = 3600f;
             Destroy(GetComponent<Collider2D>());
+            _spawnManager.EnemyDestroyed();
             Destroy(this.gameObject, 2.5f);
         }
 
@@ -216,6 +221,7 @@ public class Enemy : MonoBehaviour
             _audioSource.Play();
             _canFire = 3600f;
             Destroy(GetComponent<Collider2D>());
+            _spawnManager.EnemyDestroyed();
             Destroy(this.gameObject, 2.5f);
         }
     }

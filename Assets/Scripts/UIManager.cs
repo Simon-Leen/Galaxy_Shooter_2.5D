@@ -35,12 +35,15 @@ public class UIManager : MonoBehaviour
     private Image _thrusterImg;
 
     private bool _isThrusterCharging = false;
+
+    [SerializeField]
+    private Text _waveText;
     void Start()
     {
         _scoreText.text = "Score: " + 0;
-        //_ammoText.text = "Ammo: " + 0;
         _gameOverText.gameObject.SetActive(false);
         _restartText.gameObject.SetActive(false);
+        _waveText.text = "Wave: 0";
         _gameManager = GameObject.Find("Game_Manager").GetComponent<GameManager>();
         if (_gameManager == null)
         {
@@ -109,6 +112,11 @@ public class UIManager : MonoBehaviour
         {
             GameOverSeq();
         }
+    }
+
+    public void UpdateWave(int wave)
+    {
+        _waveText.text = "Wave: " + wave;
     }
     void GameOverSeq()
     {

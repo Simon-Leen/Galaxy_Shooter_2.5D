@@ -14,16 +14,78 @@ public class SpawnManager : MonoBehaviour
     private GameObject[] _powerups;
     private bool _stopSpawning = false;
 
+    private int _baseEnemies = 4;
+    [SerializeField]
+    private int _waveLevel = 1;
+    [SerializeField]
+    private int _enemiesToSpawn;
+    [SerializeField]
+    private int _remainingEnemies;
+    [SerializeField]
+    private int _enemiesSpawned = 0;
+
+    private UIManager _uiManager;
+
+    private void Start()
+    {
+        _enemiesToSpawn = _baseEnemies + _waveLevel;
+        _remainingEnemies = _enemiesToSpawn;
+
+        _uiManager = GameObject.Find("Canvas").GetComponent<UIManager>();
+        if (_uiManager == null)
+        {
+            Debug.LogError("UI Manager is Null in Spawn Manger");
+        }
+    }
+    private void Update()
+    {
+          
+    }
+
     public void StartSpawning()
     {
+        StartCoroutine("WaveStarting");
+        //StartCoroutine("SpawnEnemies");
+        //StartCoroutine("SpawnPowerup");
+    }
+
+    public void EnemyDestroyed()
+    {
+        if(_remainingEnemies > 1)
+        {
+            _remainingEnemies--;
+        }
+        else
+        {
+            _remainingEnemies--;
+            _stopSpawning = true;
+            _waveLevel++;
+            StartCoroutine("WaveStarting");
+        }
+    }
+
+    void WaveStatus()
+    {
+        
+    }
+
+    IEnumerator WaveStarting()
+    {
+        yield return new WaitForSeconds(3);
+        Debug.Log("Wave " + _waveLevel + " starting!");
+        _stopSpawning = false;
+        _enemiesToSpawn = _baseEnemies + _waveLevel;
+        _remainingEnemies = _enemiesToSpawn;
+        _enemiesSpawned = 0;
+        _uiManager.UpdateWave(_waveLevel);
         StartCoroutine("SpawnEnemies");
         StartCoroutine("SpawnPowerup");
     }
 
     IEnumerator SpawnEnemies()
     {
-        yield return new WaitForSeconds(2f);
-        while(_stopSpawning == false)
+        yield return new WaitForSeconds(3f);
+        while(_stopSpawning == false && _enemiesSpawned < _enemiesToSpawn)
         {
             int enemyType = Random.Range(0, 10);
             
@@ -38,6 +100,7 @@ public class SpawnManager : MonoBehaviour
                 GameObject newEnemy = Instantiate(_newEnemy, spawnPos, Quaternion.identity);
                 newEnemy.transform.parent = _enemyContainer.transform;
             }
+            _enemiesSpawned++;
             yield return new WaitForSeconds(5f);
         }
     }
