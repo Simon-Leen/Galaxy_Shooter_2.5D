@@ -117,6 +117,26 @@ public class Enemy : MonoBehaviour
     {
         transform.Translate( (Vector3.down + new Vector3(_sideways, 0, 0)) * _speed * Time.deltaTime);
 
+        if( _player != null && !_isRedEnemy)
+        {
+            float distanceToo = Vector3.Distance(transform.position, _player.transform.position);
+            float playerY = _player.transform.position.y;
+            float enemyY = transform.position.y;
+            Vector3 enemyPos = transform.position;
+            Vector3 playerPos = _player.transform.position;
+
+            Quaternion targetRot = Quaternion.LookRotation(transform.forward, (enemyPos - playerPos));
+
+            if (distanceToo < 3f && enemyY >= playerY)
+            {
+                transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, (_speed * 1.5f) * Time.deltaTime);
+            }
+            else
+            {
+                transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.identity,_speed * Time.deltaTime);
+            }
+        }
+        
         if (transform.position.y < -6f)
         {
             transform.position = new Vector3(transform.position.x, 7f, 0);

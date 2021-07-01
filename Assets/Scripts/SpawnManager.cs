@@ -59,6 +59,8 @@ public class SpawnManager : MonoBehaviour
         {
             _remainingEnemies--;
             _stopSpawning = true;
+            StopCoroutine("SpawnEnemies");
+            StopCoroutine("SpawnPowerup");
             _waveLevel++;
             StartCoroutine("WaveStarting");
         }
