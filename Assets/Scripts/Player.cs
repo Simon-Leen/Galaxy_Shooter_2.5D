@@ -81,6 +81,12 @@ public class Player : MonoBehaviour
     [SerializeField]
     private bool _isThrustersCharging = false;
 
+    [SerializeField]
+    private GameObject _magnetField;
+
+    private GameObject[] _powerups;
+
+
     void Start()
     {
         transform.position = new Vector3(0, -2, 0);
@@ -91,8 +97,10 @@ public class Player : MonoBehaviour
         _audioSource = GetComponent<AudioSource>();
         
         _camShake = Camera.main.GetComponent<CameraShake>();
+
         
-        if(_camShake == null)
+
+        if (_camShake == null)
         {
             Debug.LogError("Camera Shake is null");
         }
@@ -119,7 +127,9 @@ public class Player : MonoBehaviour
 
     void Update()
     {
+        _powerups = GameObject.FindGameObjectsWithTag("Powerup");
         CalculateMovement();
+
 
         if (Input.GetKeyDown(KeyCode.Space) && Time.time > _nextFire)
         {
@@ -160,6 +170,25 @@ public class Player : MonoBehaviour
             {
                 _audioSource.clip = _emptyAmmo;
                 _audioSource.Play();
+            }
+        }
+        if(Input.GetKeyDown(KeyCode.C))
+        {
+            _magnetField.SetActive(true);
+            foreach(GameObject powerUp in _powerups)
+            {
+                Powerup p = powerUp.GetComponent<Powerup>();
+                p.Magnetized();
+            }
+            
+        }
+        if(Input.GetKeyUp(KeyCode.C))
+        {
+            _magnetField.SetActive(false);
+            foreach (GameObject powerUp in _powerups)
+            {
+                Powerup p = powerUp.GetComponent<Powerup>();
+                p.DeMagnetize();
             }
         }
     }

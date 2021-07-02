@@ -14,18 +14,63 @@ public class Powerup : MonoBehaviour
     private AudioClip _powerupDestroyed;
     SpriteRenderer _renderer;
 
+    private Player _player;
+
+    private bool _isMagnetized = false;
+    private bool _isPowerupActive = true;
+
     private void Start()
     {
         _renderer = GetComponent<SpriteRenderer>();
+
+        _player = GameObject.Find("Player").GetComponent<Player>();
+        if (_player == null)
+        {
+            Debug.LogError("Player is Null is powerup");
+        }
     }
     void Update()
     {
-        transform.Translate(Vector3.down * _speed * Time.deltaTime);
+        Movement();
+    }
 
-        if(transform.position.y < -5f)
+    void Movement()
+    {
+        transform.Translate(Vector3.down * _speed * Time.deltaTime);
+        if (_player != null && _isMagnetized && _isPowerupActive)
+        {
+            float distanceToo = Vector3.Distance(transform.position, _player.transform.position);
+            float playerY = _player.transform.position.y;
+            float powerupY = transform.position.y;
+            Vector3 powerupPos = transform.position;
+            Vector3 playerPos = _player.transform.position;
+
+            Quaternion targetRot = Quaternion.LookRotation(transform.forward, (powerupPos - playerPos));
+
+            if (distanceToo < 4f )
+            {
+                transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, (_speed * 1.5f) * Time.deltaTime);
+            }
+        }
+        else
+        {
+            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.identity, _speed * Time.deltaTime);
+        }
+
+        if (transform.position.y < -5f)
         {
             Destroy(this.gameObject);
         }
+    }
+
+    public void Magnetized()
+    {
+        _isMagnetized = true;
+    }
+
+    public void DeMagnetize()
+    {
+        _isMagnetized = false;
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -74,6 +119,7 @@ public class Powerup : MonoBehaviour
         {
             if(transform.position.y < 5f)
             {
+                _isPowerupActive = false;
                 StartCoroutine("FizzleOut");
                 AudioSource.PlayClipAtPoint(_powerupDestroyed, transform.position);
                 Destroy(other.gameObject);
