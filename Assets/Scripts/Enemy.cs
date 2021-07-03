@@ -11,6 +11,8 @@ public class Enemy : MonoBehaviour
     private GameObject _laserPrefab;
     [SerializeField]
     private GameObject _redEnemyLaser;
+    [SerializeField]
+    private GameObject _laserBehind;
     private float _fireRate = 3f;
     private float _canFire = -1;
 
@@ -30,6 +32,9 @@ public class Enemy : MonoBehaviour
     private bool _activeShield = true;
 
     private SpawnManager _spawnManager;
+
+    private bool _isPlayerBehind = false;
+    private bool _chasingPlayer = false;
 
     private void Start()
     {
@@ -79,12 +84,22 @@ public class Enemy : MonoBehaviour
     }
     void EnemyFire()
     {
-        if (Time.time > _canFire)
+        if (Time.time > _canFire && !_chasingPlayer)
         {
             _fireRate = Random.Range(3f, 7f);
             _canFire = Time.time + _fireRate;
 
-            GameObject enemyLaser = Instantiate(_laserPrefab, transform.position, Quaternion.identity);
+            GameObject enemyLaser;
+
+            if(!_isPlayerBehind)
+            {
+                enemyLaser = Instantiate(_laserPrefab, transform.position, Quaternion.identity);
+            }
+            else
+            {
+                enemyLaser = Instantiate(_laserBehind, transform.position + new Vector3(0,2.3f,0), Quaternion.Euler(0, 0, 180));
+            }
+
             Laser[] lasers = enemyLaser.GetComponentsInChildren<Laser>();
             foreach (Laser l in lasers)
             {
@@ -127,12 +142,25 @@ public class Enemy : MonoBehaviour
 
             Quaternion targetRot = Quaternion.LookRotation(transform.forward, (enemyPos - playerPos));
 
+            if(distanceToo > 3f)
+            {
+                _isPlayerBehind = false;
+                _chasingPlayer = false;
+            }
+
             if (distanceToo < 3f && enemyY >= playerY)
             {
+                _chasingPlayer = true;
                 transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, (_speed * 1.5f) * Time.deltaTime);
+                _isPlayerBehind = false;
+            }
+            else if(distanceToo < 3f && enemyY < playerY)
+            {
+                _isPlayerBehind = true;
             }
             else
             {
+                _chasingPlayer = false;
                 transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.identity,_speed * Time.deltaTime);
             }
         }

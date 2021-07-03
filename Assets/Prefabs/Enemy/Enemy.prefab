@@ -155,6 +155,8 @@ MonoBehaviour:
     type: 3}
   _redEnemyLaser: {fileID: 6626297560587049667, guid: f8320e7c19a819d469c4b310deacf748,
     type: 3}
+  _laserBehind: {fileID: 6626297560587049667, guid: 49fb4806a3048354883eaa41a2c7996b,
+    type: 3}
   _explosionSound: {fileID: 8300000, guid: a885c043fab7e46438bba03ba9dab6bc, type: 3}
   _enemyLaserSound: {fileID: 8300000, guid: 75676f361bdfeaf41a46623e95df3dbc, type: 3}
   _isRedEnemy: 0

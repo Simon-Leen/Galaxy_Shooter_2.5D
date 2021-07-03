@@ -119,6 +119,7 @@ public class Powerup : MonoBehaviour
         {
             if(transform.position.y < 5f)
             {
+                Debug.Log(other.gameObject.name + " : " + other.name);
                 _isPowerupActive = false;
                 StartCoroutine("FizzleOut");
                 AudioSource.PlayClipAtPoint(_powerupDestroyed, transform.position);
