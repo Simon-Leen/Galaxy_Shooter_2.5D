@@ -36,6 +36,9 @@ public class Enemy : MonoBehaviour
     private bool _isPlayerBehind = false;
     private bool _chasingPlayer = false;
 
+    private bool _onComingLaser = false;
+    private int _onComingSide = 0;
+
     private void Start()
     {
         _player = GameObject.Find("Player").GetComponent<Player>();
@@ -130,6 +133,10 @@ public class Enemy : MonoBehaviour
 
     void CalcMovement()
     {
+        if(_onComingLaser)
+        {
+            LaserDodge();
+        }
         transform.Translate( (Vector3.down + new Vector3(_sideways, 0, 0)) * _speed * Time.deltaTime);
 
         if( _player != null && !_isRedEnemy)
@@ -186,6 +193,33 @@ public class Enemy : MonoBehaviour
             _sideways = Random.Range(-0.25f, 0.25f);
         }
     }
+
+    void LaserDodge()
+    {
+        if ( _onComingSide < 0)
+        {
+            transform.Translate(Vector3.right * (_speed*2) * Time.deltaTime);
+        }
+        else
+        {
+            transform.Translate(Vector3.left * (_speed * 2) * Time.deltaTime);
+        }
+    }
+
+    public void LaserSide(bool oncoming, int side)
+    {
+        if (oncoming)
+        {
+            _onComingLaser = true;
+            _onComingSide = side;
+        }
+        else
+        {
+            _onComingLaser = false;
+            _onComingSide = side;
+        }
+    }
+
     private void OnTriggerEnter2D(Collider2D other)
     {
         if(other.tag == "Player")
