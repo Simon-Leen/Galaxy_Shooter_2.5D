@@ -106,6 +106,9 @@ public class Powerup : MonoBehaviour
                     case 7:
                         player.Damage();
                         break;
+                    case 8:
+                        player.MissileActivate();
+                        break;
                     default:
                         Debug.Log("Unknown item collected");
                         break;

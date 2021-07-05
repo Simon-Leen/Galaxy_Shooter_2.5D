@@ -128,25 +128,29 @@ public class SpawnManager : MonoBehaviour
             {
                 Instantiate(_powerups[2], spawnPos, Quaternion.identity);
             }
-            else if (randomPowerup >= 70 && randomPowerup < 80)
+            else if (randomPowerup >= 70 && randomPowerup < 75)
             {
                 Instantiate(_powerups[3], spawnPos, Quaternion.identity);
             }
-            else if (randomPowerup >= 80 && randomPowerup < 85)
+            else if (randomPowerup >= 75 && randomPowerup < 80)
             {
                 Instantiate(_powerups[4], spawnPos, Quaternion.identity);
             }
-            else if (randomPowerup >= 85 && randomPowerup < 90)
+            else if (randomPowerup >= 80 && randomPowerup < 85)
             {
                 Instantiate(_powerups[5], spawnPos, Quaternion.identity);
             }
-            else if (randomPowerup >= 90 && randomPowerup < 95)
+            else if (randomPowerup >= 85 && randomPowerup < 90)
             {
                 Instantiate(_powerups[6], spawnPos, Quaternion.identity);
             }
-            else 
+            else if (randomPowerup >= 90 && randomPowerup < 95)
             {
                 Instantiate(_powerups[7], spawnPos, Quaternion.identity);
+            }
+            else
+            {
+                Instantiate(_powerups[8], spawnPos, Quaternion.identity);
             }
             yield return new WaitForSeconds(Random.Range(5f,8f));
         }

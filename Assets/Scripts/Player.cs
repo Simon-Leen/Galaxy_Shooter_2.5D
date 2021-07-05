@@ -20,20 +20,15 @@ public class Player : MonoBehaviour
     private GameObject _leftWingDamage;
     [SerializeField]
     private GameObject _rightWingDamage;
-    [SerializeField]
     private float _fireRate = 0.3f;
-    [SerializeField]
     private float _nextFire = 0f;
-    [SerializeField]
     private int _lives = 3;
     [SerializeField]
     private int _score;
     private SpawnManager spawnManager;
     [SerializeField]
     private bool _isTripleShotActive = false;
-    [SerializeField]
     private bool _isSpeedActive = false;
-    [SerializeField]
     private bool _isShieldActive = false;
     private UIManager _uiManager;
     [SerializeField]
@@ -43,42 +38,32 @@ public class Player : MonoBehaviour
     private AudioClip _emptyAmmo;
     [SerializeField]
     private AudioClip _playerHit;
-
-    [SerializeField]
     private float _thrusterSpeed = 1.5f;
     [SerializeField]
     private GameObject _thrusterPrefab;
 
-    [SerializeField]
     private int _shieldHealth;
-
-    [SerializeField]
     private int _playerAmmo;
 
     [SerializeField]
     private PostProcessVolume _ppv;
-
     private ColorGrading _cgl;
     private Bloom _bloom;
 
     [SerializeField]
     private GameObject _chaosGuns;
-    [SerializeField]
     private bool _isChaosActive;
 
     [SerializeField]
     private GameObject _playerEMP;
-    [SerializeField]
     private bool _isEMPActive = false;
 
     private CameraShake _camShake;
 
-    [SerializeField]
     private float _thrustersLevel = 3f;
     private float _canThrust = 0f;
     private float _thrusterCharge = 3f;
     private bool _isThrustersActive = false;
-    [SerializeField]
     private bool _isThrustersCharging = false;
 
     [SerializeField]
@@ -86,6 +71,13 @@ public class Player : MonoBehaviour
 
     private GameObject[] _powerups;
 
+    [SerializeField]
+    private GameObject _missilePrefab;
+    [SerializeField]
+    private bool _isMissileActive = false;
+    private GameObject[] _enemies;
+    [SerializeField]
+    private AudioClip _noEnemiesSound;
 
     void Start()
     {
@@ -128,6 +120,7 @@ public class Player : MonoBehaviour
     void Update()
     {
         _powerups = GameObject.FindGameObjectsWithTag("Powerup");
+        _enemies = GameObject.FindGameObjectsWithTag("Enemy");
         CalculateMovement();
 
 
@@ -189,6 +182,26 @@ public class Player : MonoBehaviour
             {
                 Powerup p = powerUp.GetComponent<Powerup>();
                 p.DeMagnetize();
+            }
+        }
+        if(Input.GetKeyDown(KeyCode.M))
+        {
+            if (_isMissileActive == true)
+            {
+                if(_enemies.Length < 1)
+                {
+                    _audioSource.clip = _noEnemiesSound;
+                    _audioSource.Play();
+                }
+                else
+                {
+                    FireMissile();
+                }
+            }
+            else
+            {
+                _audioSource.clip = _emptyAmmo;
+                _audioSource.Play();
             }
         }
     }
@@ -338,6 +351,11 @@ public class Player : MonoBehaviour
         _isEMPActive = false;
     }
 
+    public void FireMissile()
+    {
+        Instantiate(_missilePrefab, transform.position + new Vector3(0, 1, 0), Quaternion.identity);
+        _isMissileActive = false;
+    }
     public void TakeDamage()
     {
         if(_isShieldActive == true)
@@ -500,6 +518,11 @@ public class Player : MonoBehaviour
             _playerAmmo -= 5;
         }
         _uiManager.UpdateAmmo(_playerAmmo);
+    }
+
+    public void MissileActivate()
+    {
+        _isMissileActive = true;
     }
 
     private void OnTriggerEnter2D(Collider2D other)

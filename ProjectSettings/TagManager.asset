@@ -13,6 +13,7 @@ TagManager:
   - EnemyEMP
   - EnemyShield
   - Powerup
+  - Missile
   layers:
   - Default
   - TransparentFX

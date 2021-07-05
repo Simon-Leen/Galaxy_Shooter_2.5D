@@ -352,6 +352,7 @@ MonoBehaviour:
   - {fileID: 7453386648574051630, guid: 35093eae844ac1f4bb1cef8e5ba87c8f, type: 3}
   - {fileID: 5472664443027866336, guid: 9c31d067ee0a8f44689aaff5a3c28567, type: 3}
   - {fileID: 8795508993333779651, guid: e7417cb5ea9990048a8a4b2c4fe05747, type: 3}
+  - {fileID: 4251476617827120855, guid: 7222bdf3b6f9ec343947f72bb91c451f, type: 3}
   _waveLevel: 1
   _enemiesToSpawn: 0
   _remainingEnemies: 0
@@ -713,29 +714,21 @@ MonoBehaviour:
   _shieldVisualizer: {fileID: 1224693437}
   _leftWingDamage: {fileID: 2016383540}
   _rightWingDamage: {fileID: 695403167}
-  _fireRate: 0.3
-  _nextFire: 0
-  _lives: 3
   _score: 0
   _isTripleShotActive: 0
-  _isSpeedActive: 0
-  _isShieldActive: 0
   _laserSound: {fileID: 8300000, guid: 75676f361bdfeaf41a46623e95df3dbc, type: 3}
   _emptyAmmo: {fileID: 8300000, guid: 41b8df8fce2e854459fd6dc1df351757, type: 3}
   _playerHit: {fileID: 8300000, guid: 520c6653b01cf5444aa3a09d6c4abd01, type: 3}
-  _thrusterSpeed: 1.5
   _thrusterPrefab: {fileID: 985861408}
-  _shieldHealth: 0
-  _playerAmmo: 0
   _ppv: {fileID: 345212788}
   _chaosGuns: {fileID: 1672212670}
-  _isChaosActive: 0
   _playerEMP: {fileID: 5469964908514939104, guid: 5f4dbc2d27755b84bb595faa73399d72,
     type: 3}
-  _isEMPActive: 0
-  _thrustersLevel: 3
-  _isThrustersCharging: 0
   _magnetField: {fileID: 2138353737}
+  _missilePrefab: {fileID: 3553845497695087919, guid: ae433b1c9ac3e584499d71313624ae53,
+    type: 3}
+  _isMissileActive: 0
+  _noEnemiesSound: {fileID: 8300000, guid: b0fc7c463f6937c45a4ee9b3caec9d4f, type: 3}
 --- !u!212 &407572343
 SpriteRenderer:
   m_ObjectHideFlags: 0
