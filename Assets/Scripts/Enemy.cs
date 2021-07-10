@@ -14,7 +14,7 @@ public class Enemy : MonoBehaviour
     [SerializeField]
     private GameObject _laserBehind;
     private float _fireRate = 3f;
-    private float _canFire = -1;
+    private float _canFire;
 
     private Animator _anim;
     private AudioSource _audioSource;
@@ -29,7 +29,7 @@ public class Enemy : MonoBehaviour
     private bool _isRedEnemy = false;
     [SerializeField]
     private GameObject _shieldVisualizer;
-    private bool _activeShield = true;
+    private bool _activeShield = false;
 
     private SpawnManager _spawnManager;
 
@@ -39,8 +39,11 @@ public class Enemy : MonoBehaviour
     private bool _onComingLaser = false;
     private int _onComingSide = 0;
 
+    private bool _isBossActive = true;
+
     private void Start()
     {
+        _canFire = Time.time + 1f;
         _player = GameObject.Find("Player").GetComponent<Player>();
         if (_player == null)
         {
@@ -62,7 +65,11 @@ public class Enemy : MonoBehaviour
         }
         else
         {
-            _shieldVisualizer.SetActive(true);
+            if(!_isBossActive)//change to not
+            {
+                _activeShield = true;
+                _shieldVisualizer.SetActive(true);
+            }
             _speed = 4f;
         }
         StartCoroutine("Sideways");

@@ -56,6 +56,7 @@ public class Player : MonoBehaviour
 
     [SerializeField]
     private GameObject _playerEMP;
+    [SerializeField]
     private bool _isEMPActive = false;
 
     private CameraShake _camShake;

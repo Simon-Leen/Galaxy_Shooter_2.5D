@@ -26,6 +26,11 @@ public class SpawnManager : MonoBehaviour
 
     private UIManager _uiManager;
 
+    [SerializeField]
+    private GameObject _boss;
+
+    private bool _isBossActive = true;
+
     private void Start()
     {
         _enemiesToSpawn = _baseEnemies + _waveLevel;
@@ -45,37 +50,47 @@ public class SpawnManager : MonoBehaviour
     public void StartSpawning()
     {
         StartCoroutine("WaveStarting");
-        //StartCoroutine("SpawnEnemies");
-        //StartCoroutine("SpawnPowerup");
     }
 
     public void EnemyDestroyed()
     {
-        if(_remainingEnemies > 1)
+        if(_remainingEnemies > 1 && !_isBossActive)
         {
             _remainingEnemies--;
         }
-        else
+        else if (!_isBossActive)
         {
             _remainingEnemies--;
-            _stopSpawning = true;
             StopCoroutine("SpawnEnemies");
             StopCoroutine("SpawnPowerup");
-            _waveLevel++;
-            StartCoroutine("WaveStarting");
+            if (_waveLevel <= 1)
+            {
+                _waveLevel++;
+                StartCoroutine("WaveStarting");
+            }
+            else
+            {
+                StartCoroutine("SpawnPowerup");
+                StartCoroutine("BossTime");
+                _isBossActive = true;
+            }
+            
         }
+        else
+        { _remainingEnemies--; }
     }
 
-    void WaveStatus()
+    IEnumerator BossTime()
     {
-        
+        yield return new WaitForSeconds(1f);
+        GameObject boss = Instantiate(_boss, new Vector3(0, 8f, 0), Quaternion.identity);
+        boss.transform.rotation = Quaternion.Euler(0, 0, 90);
     }
 
     IEnumerator WaveStarting()
     {
         yield return new WaitForSeconds(3);
         Debug.Log("Wave " + _waveLevel + " starting!");
-        _stopSpawning = false;
         _enemiesToSpawn = _baseEnemies + _waveLevel;
         _remainingEnemies = _enemiesToSpawn;
         _enemiesSpawned = 0;
