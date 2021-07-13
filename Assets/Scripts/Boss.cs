@@ -28,13 +28,17 @@ public class Boss : MonoBehaviour
     private AudioClip _bossVulnerableSound;
     [SerializeField]
     private AudioClip _explosionSound;
+    [SerializeField]
+    private GameObject _explosionPrefab;
 
     [SerializeField]
     private GameObject[] _bossDamages;
 
-    private Animator _anim;
-
     private GameObject[] _enemies;
+
+    private UIManager _uiManager;
+
+    private SpawnManager _spawnManager;
 
     public enum BossState
     {
@@ -67,15 +71,21 @@ public class Boss : MonoBehaviour
             Debug.LogError("Audio Source on Boss is Null");
         }
 
-        _anim = GetComponent<Animator>();
-        if (_anim == null)
+        _uiManager = GameObject.Find("Canvas").GetComponent<UIManager>();
+        if (_uiManager == null)
         {
-            Debug.LogError("Animator is Null on Boss");
+            Debug.LogError("UI Manager is Null in Boss");
         }
 
-        
+        _spawnManager = GameObject.Find("Spawn_Manager").GetComponent<SpawnManager>();
+        if (_spawnManager == null)
+        {
+            Debug.LogError("Spawn Manager is Null in Boss");
+        }
 
         _canFire = Time.time + 1f;
+        _uiManager.ActivateBossHealth();
+        _uiManager.UpdateBossHealth(_bossHealth);
     }
 
     void Update()
@@ -169,12 +179,15 @@ public class Boss : MonoBehaviour
     }
     void Spawn()
     {
-        Vector3 spawnL = new Vector3(transform.position.x + 2f, transform.position.y - 0.25f, 0);
-        GameObject newEnemy = Instantiate(_enemy, spawnL, Quaternion.identity);
-        newEnemy.transform.rotation = Quaternion.Euler(0, 0, 90);
-        Vector3 spawnR = new Vector3(transform.position.x - 2f, transform.position.y - 0.25f, 0);
-        newEnemy = Instantiate(_enemy, spawnR, Quaternion.identity);
-        newEnemy.transform.rotation = Quaternion.Euler(0, 0, -90);
+        if(_player != null)
+        {
+            Vector3 spawnL = new Vector3(transform.position.x + 2f, transform.position.y - 0.25f, 0);
+            GameObject newEnemy = Instantiate(_enemy, spawnL, Quaternion.identity);
+            newEnemy.transform.rotation = Quaternion.Euler(0, 0, 90);
+            Vector3 spawnR = new Vector3(transform.position.x - 2f, transform.position.y - 0.25f, 0);
+            newEnemy = Instantiate(_enemy, spawnR, Quaternion.identity);
+            newEnemy.transform.rotation = Quaternion.Euler(0, 0, -90);
+        }
     }
     IEnumerator AttackReady()
     {
@@ -261,30 +274,55 @@ public class Boss : MonoBehaviour
             if(_bossHealth > 1)
             {
                 _bossHealth--;
+                _uiManager.UpdateBossHealth(_bossHealth);
                 BossDamage(_bossHealth);
             }
             else
             {
                 _bossHealth--;
+                _uiManager.UpdateBossHealth(_bossHealth);
                 BossDamage(_bossHealth);
 
                 currentState = BossState.Won;
                 StopAllCoroutines();
                 StartCoroutine(EndWaves());
+                _uiManager.GameOverSeq(true);
             }
             
+        }
+        if(other.tag == "PlayerEMP")
+        {
+            if (_bossHealth > 2)
+            {
+                _bossHealth = _bossHealth-2;
+                _uiManager.UpdateBossHealth(_bossHealth);
+                BossDamage(_bossHealth);
+            }
+            else
+            {
+                _bossHealth = _bossHealth - 2;
+                _uiManager.UpdateBossHealth(_bossHealth);
+                BossDamage(_bossHealth);
+
+                currentState = BossState.Won;
+                StopAllCoroutines();
+                StartCoroutine(EndWaves());
+                _uiManager.GameOverSeq(true);
+            }
         }
     }
     IEnumerator EndWaves()
     {
         DestroyEnemies();
-        yield return new WaitForSeconds(2);
-        _anim.SetTrigger("OnEnemyDeath");
+        
+        yield return new WaitForSeconds(0);
+        Instantiate(_explosionPrefab, transform.position, Quaternion.identity);
         _audioSource.clip = _explosionSound;
         _audioSource.Play();
         _canFire = 3600f;
         Destroy(GetComponent<Collider2D>());
-        Destroy(this.gameObject, 2.5f);
+        _spawnManager.OnBossDeath();
+        Destroy(this.gameObject, 0.3f);
     }
     private void DestroyEnemies()
     {

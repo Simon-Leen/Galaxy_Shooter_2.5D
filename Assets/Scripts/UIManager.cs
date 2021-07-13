@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Rendering.PostProcessing;
 
 public class UIManager : MonoBehaviour
 {
@@ -38,17 +39,29 @@ public class UIManager : MonoBehaviour
 
     [SerializeField]
     private Text _waveText;
+    [SerializeField]
+    private Text _BossHealthText;
+
+    [SerializeField]
+    private PostProcessVolume _ppv;
+    private ColorGrading _cgl;
+    private Bloom _bloom;
+
     void Start()
     {
         _scoreText.text = "Score: " + 0;
         _gameOverText.gameObject.SetActive(false);
         _restartText.gameObject.SetActive(false);
         _waveText.text = "Wave: 0";
+        _BossHealthText.gameObject.SetActive(false);
+        _BossHealthText.text = "Boss Health: 10";
         _gameManager = GameObject.Find("Game_Manager").GetComponent<GameManager>();
         if (_gameManager == null)
         {
             Debug.LogError("Game Manager is Null");
         }
+        _ppv.profile.TryGetSettings(out _cgl);
+        _ppv.profile.TryGetSettings(out _bloom);
     }
 
     public void UpdateThrusters(float level)
@@ -110,7 +123,7 @@ public class UIManager : MonoBehaviour
         _livesImg.sprite = _liveSprites[lives];
         if(lives == 0)
         {
-            GameOverSeq();
+            GameOverSeq(false);
         }
     }
 
@@ -118,11 +131,26 @@ public class UIManager : MonoBehaviour
     {
         _waveText.text = "Wave: " + wave;
     }
-    void GameOverSeq()
+
+    public void ActivateBossHealth()
+    {
+        _BossHealthText.gameObject.SetActive(true);
+    }
+    public void UpdateBossHealth(int health)
+    {
+        _BossHealthText.text = "Boss Health: " + health;
+    }
+    public void GameOverSeq( bool status)
     {
         StartCoroutine("GameOver");
         _restartText.gameObject.SetActive(true);
         _gameManager.GameOver();
+        if(status)
+        {
+            _cgl.temperature.value = 100f;
+            _cgl.tint.value = -60f;
+            _bloom.intensity.value = 5f;
+        }
     }
 
     IEnumerator GameOver()

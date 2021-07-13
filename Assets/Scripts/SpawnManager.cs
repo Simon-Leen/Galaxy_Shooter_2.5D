@@ -29,7 +29,7 @@ public class SpawnManager : MonoBehaviour
     [SerializeField]
     private GameObject _boss;
 
-    private bool _isBossActive = true;
+    private bool _isBossActive = false;
 
     private void Start()
     {
@@ -172,6 +172,11 @@ public class SpawnManager : MonoBehaviour
     }
 
     public void OnPlayerDeath()
+    {
+        _stopSpawning = true;
+    }
+
+    public void OnBossDeath()
     {
         _stopSpawning = true;
     }
